@@ -18,4 +18,11 @@ resource "azurerm_subnet" "snet_gmf_app_services" {
     address_prefixes     = ["10.30.100.0/27"]
 }
 
-
+# create peering
+#resource "azurerm_virtual_network_peering" "peer_vnet_csenergy_vpn" {
+#  name                         = "peer-vnet-csenergy-vpn"
+#  resource_group_name          = azurerm_resource_group.rg_gmf_network.name
+#   virtual_network_name         = azurerm_virtual_network.vnet_gmf.name
+#   remote_virtual_network_id    = var.vnet_csenergy_vpn_id
+#   allow_virtual_network_access = true
+# }
