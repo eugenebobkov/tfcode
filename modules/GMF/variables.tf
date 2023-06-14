@@ -1,5 +1,5 @@
 variable "azure_region" {
-  default     = "australiasoutheast"
+  default     = "australiaeast"
   description = "Azure region for resource location"
 }
 
