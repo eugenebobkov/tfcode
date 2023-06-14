@@ -1,9 +1,9 @@
-resource "azurerm_resource_group" "gmf_rg_network" {
+resource "azurerm_resource_group" "rg_gmf_network" {
   location = var.azure_region
-  name     = "fg-gmf-network-australiasoutheast"
+  name     = format("rg-csenergy-gmf-network-%s", var.azure_region)
 }
 
-resource "azurerm_resource_group" "gmf_rg_app_services" {
+resource "azurerm_resource_group" "rg_gmf_app_services" {
   location = var.azure_region
-  name     = "fg-gmf-app-services-australiasoutheast"
+  name     = format("rg-csenergy-gmf-app-services-%s", var.azure_region)
 }
