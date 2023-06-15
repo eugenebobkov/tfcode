@@ -4,7 +4,9 @@ resource "azurerm_service_plan" "asp" {
   location            = azurerm_resource_group.rg_app_services.location
   resource_group_name = azurerm_resource_group.rg_app_services.name
   os_type             = "Linux"
-  sku_name            = "B1"
+  #sku_name            = "B1"
+  # deployment slots supported only on standard and premium service plans
+  sku_name            = "S1"
 }
 
 # middleware app
@@ -39,9 +41,16 @@ resource "azurerm_private_endpoint" "middleware_privateendpoint" {
   private_service_connection {
     name = format("plink-%s-middleware", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_middleware.id
-    subresource_names = ["sites"]
+    subresource_names = ["sites-dev"]
     is_manual_connection = false
   }
+}
+
+resource "azurerm_linux_web_app_slot" "slot_middleware_dev" {
+  name           = "dev"
+  app_service_id = azurerm_linux_web_app.webapp_middleware.id
+  virtual_network_subnet_id = azurerm_subnet.snet_app_services_outbound.id
+  site_config {}
 }
 
 # webtier app
@@ -58,6 +67,13 @@ resource "azurerm_linux_web_app" "webapp_webtier" {
       node_version = "18-lts"
     }
   }
+}
+
+resource "azurerm_linux_web_app_slot" "slot_webtier_dev" {
+  name           = "dev"
+  app_service_id = azurerm_linux_web_app.webapp_webtier.id
+  virtual_network_subnet_id = azurerm_subnet.snet_app_services_outbound.id
+  site_config {}
 }
                                                        
 resource "azurerm_private_endpoint" "webtier_privateendpoint" {
