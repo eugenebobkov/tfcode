@@ -27,8 +27,8 @@ resource "azurerm_linux_web_app" "webapp_middleware" {
 }
 
 # private endpoint for middleware app service
-resource "azurerm_private_endpoint" "middleware_privateendpoint" {
-  name                = format("middleware-%s-privatelink", local.application)
+resource "azurerm_private_endpoint" "middleware_private_endpoint" {
+  name                = format("private-link-%s-middleware", local.application)
   location            = azurerm_resource_group.rg_app_services.location
   resource_group_name = azurerm_resource_group.rg_app_services.name
   subnet_id           = azurerm_subnet.snet_app_services_integration.id
@@ -41,10 +41,31 @@ resource "azurerm_private_endpoint" "middleware_privateendpoint" {
   private_service_connection {
     name = format("plink-%s-middleware", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_middleware.id
+    subresource_names = ["sites"]
+    is_manual_connection = false
+  }
+}
+
+# private endpoint for middleware app service
+resource "azurerm_private_endpoint" "middleware_dev_slot_private_endpoint" {
+  name                = format("private-link-%s-middleware-dev", local.application)
+  location            = azurerm_resource_group.rg_app_services.location
+  resource_group_name = azurerm_resource_group.rg_app_services.name
+  subnet_id           = azurerm_subnet.snet_app_services_integration.id
+
+#  private_dns_zone_group {
+#    name = "privatednszonegroup"
+#    private_dns_zone_ids = [azurerm_private_dns_zone.dnsprivatezone.id]
+#  }
+
+  private_service_connection {
+    name = format("plink-%s-middleware-dev-slot", local.application)
+    private_connection_resource_id = azurerm_linux_web_app.webapp_middleware.id
     subresource_names = ["sites-dev"]
     is_manual_connection = false
   }
 }
+
 
 resource "azurerm_linux_web_app_slot" "slot_middleware_dev" {
   name           = "dev"
