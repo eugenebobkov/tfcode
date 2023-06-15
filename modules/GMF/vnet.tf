@@ -1,21 +1,29 @@
-resource "azurerm_virtual_network" "vnet_gmf" {
-    name                = format("vnet_csenergy_gmf_%s", var.azure_region)
+resource "azurerm_virtual_network" "vnet" {
+    name                = format("vnet_csenergy_%s_%s", local.application, var.azure_region)
     address_space       = ["10.30.100.0/24"]
     location            = var.azure_region
-    resource_group_name = azurerm_resource_group.rg_gmf_network.name
+    resource_group_name = azurerm_resource_group.rg_network.name
 
     tags = {
-      module = "GMF"
+      module = format("%s", local.application)
       environment = "production"  
     }
 }
 
 # create subnet
-resource "azurerm_subnet" "snet_gmf_app_services" {
-    name                 = format("snet-csenergy-gmf-app-services-%s", var.azure_region)
-    resource_group_name  = azurerm_resource_group.rg_gmf_network.name
-    virtual_network_name = azurerm_virtual_network.vnet_gmf.name
+resource "azurerm_subnet" "snet_app_services" {
+    name                 = format("snet-csenergy-%s-app-services-%s", local.application, var.azure_region)
+    resource_group_name  = azurerm_resource_group.rg_network.name
+    virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes     = ["10.30.100.0/27"]
+    # To be conf
+    private_endpoint_network_policies_enabled = true
+    delegation {
+       name = "Microsoft.Web"
+       service_delegation {
+         name  = "Microsoft.Web/serverFarms"
+       }
+  }
 }
 
 # create peering
