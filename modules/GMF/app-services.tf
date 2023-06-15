@@ -4,12 +4,12 @@ resource "azurerm_service_plan" "asp" {
   location            = azurerm_resource_group.rg_app_services.location
   resource_group_name = azurerm_resource_group.rg_app_services.name
   os_type             = "Linux"
-  sku_name            = "WS1"
+  sku_name            = "B1"
 }
 
 # Create the web app, pass in the App Service Plan ID
-resource "azurerm_linux_web_app" "webapp_gmf_middleware" {
-  name                  = "webapp-gmf-middleware"
+resource "azurerm_linux_web_app" "webapp_middleware" {
+  name                  = format("webapp-%s-middleware", local.application)
   location              = azurerm_resource_group.rg_app_services.location
   resource_group_name   = azurerm_resource_group.rg_app_services.name
   service_plan_id       = azurerm_service_plan.asp.id
@@ -22,6 +22,11 @@ resource "azurerm_linux_web_app" "webapp_gmf_middleware" {
       java_version = "17"
     }
   }
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "vnetintegrationconnection" {
+  app_service_id  = azurerm_windows_web_app.webapp_middleware.id
+  subnet_id       = azurerm_subnet.snet_app_services.id
 }
 
 #  Deploy code from a public GitHub repo
