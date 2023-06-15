@@ -46,7 +46,7 @@ resource "azurerm_private_endpoint" "middleware_private_endpoint" {
   }
 }
 
-# private endpoint for middleware app service
+# private endpoint for middleware app service, dev staging slot
 resource "azurerm_private_endpoint" "middleware_dev_slot_private_endpoint" {
   name                = format("private-link-%s-middleware-dev", local.application)
   location            = azurerm_resource_group.rg_app_services.location
@@ -65,7 +65,6 @@ resource "azurerm_private_endpoint" "middleware_dev_slot_private_endpoint" {
     is_manual_connection = false
   }
 }
-
 
 resource "azurerm_linux_web_app_slot" "slot_middleware_dev" {
   name           = "dev"
@@ -97,8 +96,9 @@ resource "azurerm_linux_web_app_slot" "slot_webtier_dev" {
   site_config {}
 }
                                                        
-resource "azurerm_private_endpoint" "webtier_privateendpoint" {
-  name                = format("webtier-%s-privatelink", local.application)
+# private endpoint for webtier app service
+resource "azurerm_private_endpoint" "webtier_private_endpoint" {
+  name                = format("private-link-%s-webtier", local.application)
   location            = azurerm_resource_group.rg_app_services.location
   resource_group_name = azurerm_resource_group.rg_app_services.name
   subnet_id           = azurerm_subnet.snet_app_services_integration.id
@@ -112,6 +112,26 @@ resource "azurerm_private_endpoint" "webtier_privateendpoint" {
     name = format("plink-%s-webtier", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_webtier.id
     subresource_names = ["sites"]
+    is_manual_connection = false
+  }
+}
+
+# private endpoint for webtier app service, development slot
+resource "azurerm_private_endpoint" "webtier_dev_slot_private_endpoint" {
+  name                = format("private-link-%s-webtier-dev", local.application)
+  location            = azurerm_resource_group.rg_app_services.location
+  resource_group_name = azurerm_resource_group.rg_app_services.name
+  subnet_id           = azurerm_subnet.snet_app_services_integration.id
+
+#  private_dns_zone_group {
+#    name = "privatednszonegroup"
+#    private_dns_zone_ids = [azurerm_private_dns_zone.dnsprivatezone.id]
+#  }
+
+  private_service_connection {
+    name = format("plink-%s-webtier-dev-slot", local.application)
+    private_connection_resource_id = azurerm_linux_web_app.webapp_webtier.id
+    subresource_names = ["sites-dev"]
     is_manual_connection = false
   }
 }
