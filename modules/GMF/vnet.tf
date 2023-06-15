@@ -10,7 +10,8 @@ resource "azurerm_virtual_network" "vnet" {
     }
 }
 
-# create inbound subnet
+# create integration subnet, inbound endpoints for app services will be located here
+# delegation is not required
 resource "azurerm_subnet" "snet_app_services_integration" {
     name                 = format("snet-csenergy-%s-app-services-integration-%s", local.application, var.azure_region)
     resource_group_name  = azurerm_resource_group.rg_network.name
@@ -18,18 +19,9 @@ resource "azurerm_subnet" "snet_app_services_integration" {
     address_prefixes     = ["10.30.100.0/27"]
     # To be conf
     private_endpoint_network_policies_enabled = true
-#    delegation {
-#       name = "Microsoft.Web"
-#       service_delegation {
-#         actions = [
-#           "Microsoft.Network/virtualNetworks/subnets/action",
-#         ]
-#         name = "Microsoft.Web/serverFarms"
-#       }
-#     }
 }
 
-# create outbound subnet
+# create outbound subnet for vnet integration
 resource "azurerm_subnet" "snet_app_services_outbound" {
     name                 = format("snet-csenergy-%s-app-services-outbound-%s", local.application, var.azure_region)
     resource_group_name  = azurerm_resource_group.rg_network.name
