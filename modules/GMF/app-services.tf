@@ -20,8 +20,8 @@ resource "azurerm_linux_web_app" "webapp_middleware" {
   site_config { 
     minimum_tls_version = "1.2"
     application_stack {
-      java_server = "JAVA"
-      java_version = "17"
+      java_server       = "JAVA"
+      java_version      = "17"
     }
   }
 }
