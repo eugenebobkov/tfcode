@@ -1,5 +1,5 @@
 resource "azurerm_virtual_network" "vnet" {
-    name                = format("vnet_csenergy_%s_%s", local.application, var.azure_region)
+    name                = format("vnet_%s_%s", local.application, var.azure_region)
     address_space       = [var.CIDR]
     location            = azurerm_resource_group.rg_network.location
     resource_group_name = azurerm_resource_group.rg_network.name
@@ -13,7 +13,7 @@ resource "azurerm_virtual_network" "vnet" {
 # create integration subnet, inbound endpoints for app services will be located here
 # delegation is not required
 resource "azurerm_subnet" "snet_app_services_integration" {
-    name                 = format("snet-csenergy-%s-app-services-integration-%s", local.application, var.azure_region)
+    name                 = format("snet-%s-app-services-integration-%s", local.application, var.azure_region)
     resource_group_name  = azurerm_resource_group.rg_network.name
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes     = [cidrsubnet(var.CIDR, 3, 0)]
@@ -23,7 +23,7 @@ resource "azurerm_subnet" "snet_app_services_integration" {
 
 # create outbound subnet for vnet integration
 resource "azurerm_subnet" "snet_app_services_outbound" {
-    name                 = format("snet-csenergy-%s-app-services-outbound-%s", local.application, var.azure_region)
+    name                 = format("snet-%s-app-services-outbound-%s", local.application, var.azure_region)
     resource_group_name  = azurerm_resource_group.rg_network.name
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes     = [cidrsubnet(var.CIDR, 3, 1)]
@@ -43,9 +43,9 @@ resource "azurerm_subnet" "snet_app_services_outbound" {
 
 # create peering
 #resource "azurerm_virtual_network_peering" "peer_vnet_csenergy_vpn" {
-#  name                         = "peer-vnet-csenergy-vpn"
-#  resource_group_name          = azurerm_resource_group.rg_gmf_network.name
-#   virtual_network_name         = azurerm_virtual_network.vnet_gmf.name
-#   remote_virtual_network_id    = var.vnet_csenergy_vpn_id
-#   allow_virtual_network_access = true
-# }
+#  name                         = "peer-vnet-vpn"
+#  resource_group_name          = azurerm_resource_group.rg_network.name
+#  virtual_network_name         = azurerm_virtual_network.vnet.name
+#  remote_virtual_network_id    = var.vnet_csenergy_vpn_id
+#  allow_virtual_network_access = true
+#}

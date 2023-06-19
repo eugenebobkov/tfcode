@@ -1,6 +1,6 @@
 # Create the Linux App Service Plan
 resource "azurerm_service_plan" "asp" {
-  name                = format("asp-csenergy-%s", local.application)
+  name                = format("asp-%s", local.application)
   location            = azurerm_resource_group.rg_app_services.location
   resource_group_name = azurerm_resource_group.rg_app_services.name
   os_type             = "Linux"
@@ -39,7 +39,7 @@ resource "azurerm_private_endpoint" "middleware_private_endpoint" {
 #  }
 
   private_service_connection {
-    name = format("plink-%s-middleware", local.application)
+    name = format("private-link-connection-%s-middleware", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_middleware.id
     subresource_names = ["sites"]
     is_manual_connection = false
@@ -59,7 +59,7 @@ resource "azurerm_private_endpoint" "middleware_dev_slot_private_endpoint" {
 #  }
 
   private_service_connection {
-    name = format("plink-%s-middleware-dev-slot", local.application)
+    name = format("private-link-connection-%s-middleware-dev-slot", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_middleware.id
     subresource_names = ["sites-dev"]
     is_manual_connection = false
@@ -109,7 +109,7 @@ resource "azurerm_private_endpoint" "webtier_private_endpoint" {
 #  }
 
   private_service_connection {
-    name = format("plink-%s-webtier", local.application)
+    name = format("private-link-connection-%s-webtier", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_webtier.id
     subresource_names = ["sites"]
     is_manual_connection = false
@@ -129,7 +129,7 @@ resource "azurerm_private_endpoint" "webtier_dev_slot_private_endpoint" {
 #  }
 
   private_service_connection {
-    name = format("plink-%s-webtier-dev-slot", local.application)
+    name = format("private-link-connection-%s-webtier-dev-slot", local.application)
     private_connection_resource_id = azurerm_linux_web_app.webapp_webtier.id
     subresource_names = ["sites-dev"]
     is_manual_connection = false
