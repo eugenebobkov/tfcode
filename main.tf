@@ -1,3 +1,3 @@
-module "GMF" {
-  source       = "./modules/GMF"
+module "ADAPT" {
+  source       = "./modules/ADAPT"
 }
